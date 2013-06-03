@@ -11,6 +11,9 @@ import net.mikaelkrok.smf.exception.StepPreviousNotExisitingException;
  * @author Mikael KROK 
  * 
  * 21 nov. 2012
+ * 
+ * A workflow manage a sequel of {@link Step} execution to result
+ * to a final {@link Milestone} 
  *
  */
 public interface Workflow<U extends Object, V extends Milestone<U>, T extends Step<?, ?>> {

@@ -3,6 +3,8 @@
  */
 package net.mikaelkrok.smf;
 
+import java.io.Serializable;
+
 
 /**
  * @author Mikael KROK 
@@ -10,9 +12,9 @@ package net.mikaelkrok.smf;
  * 21 nov. 2012
  *
  * The step represent a set of process that makes the {@link #Milestone)} goes
- * from initial state to the result state
+ * from initial state to the result state.
  */
-public  interface Step<T extends Milestone<U>, U extends Object> {
+public  interface Step<T extends Milestone<U>, U extends Object> extends Serializable {
 
     /**
      * 
@@ -39,7 +41,9 @@ public  interface Step<T extends Milestone<U>, U extends Object> {
     public Boolean isFinalStep();
     
     /**
-     * @return is the step is considered as final?
+     * Has the step been already executed?
+     * Allow to avoid to execute twice the same step
+     * @return 
      */
     public Boolean hasBeenExecuted();
     

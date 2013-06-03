@@ -1,6 +1,7 @@
 package net.mikaelkrok.smf.string;
 
 import net.mikaelkrok.smf.Milestone;
+import net.mikaelkrok.smf.exception.StepWithNullMilestoneException;
 import net.mikaelkrok.smf.executor.CallableStep;
 
 /**
@@ -9,7 +10,7 @@ import net.mikaelkrok.smf.executor.CallableStep;
  * 
  *         23 nov. 2012
  * 
- *         This steps trims white space n the word
+ *  render the {@link Milestone<String>} to capital letters
  * 
  */
 public class StringStepCapitalizer<V extends Milestone<String>> extends
@@ -29,6 +30,7 @@ public class StringStepCapitalizer<V extends Milestone<String>> extends
 	}
 
 	public V call() throws Exception {
+		if(milestone == null ) throw new StepWithNullMilestoneException();
 		milestone.setValue(milestone.getValue().toUpperCase());
 		System.out.println(" Result after step " + this.getClass().getName()
 				+ "  " + milestone.getValue());
