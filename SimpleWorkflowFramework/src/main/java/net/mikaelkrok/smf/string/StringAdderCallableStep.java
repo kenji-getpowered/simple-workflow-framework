@@ -7,7 +7,7 @@ import net.mikaelkrok.smf.Milestone;
 import net.mikaelkrok.smf.executor.CallableStep;
 
 /**
- * @author Mikael KROK 884002
+ * @author Mikael KROK 
  * 
  *         19 déc. 2012
  * 

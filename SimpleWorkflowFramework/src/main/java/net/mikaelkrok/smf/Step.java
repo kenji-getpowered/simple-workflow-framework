@@ -5,7 +5,7 @@ package net.mikaelkrok.smf;
 
 
 /**
- * @author Mikael KROK 884002
+ * @author Mikael KROK 
  * 
  * 21 nov. 2012
  *

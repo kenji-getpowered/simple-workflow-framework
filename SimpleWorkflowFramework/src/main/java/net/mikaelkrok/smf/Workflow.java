@@ -8,7 +8,7 @@ import net.mikaelkrok.smf.exception.StepBadPreviousException;
 import net.mikaelkrok.smf.exception.StepPreviousNotExisitingException;
 
 /**
- * @author Mikael KROK 884002
+ * @author Mikael KROK 
  * 
  * 21 nov. 2012
  *

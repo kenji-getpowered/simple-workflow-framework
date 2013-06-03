@@ -17,7 +17,7 @@ import net.mikaelkrok.smf.string.StringStepCapitalizer;
 import net.mikaelkrok.smf.string.StringStepTrimmer;
 
 /**
- * @author Mikael KROK 884002
+ * @author Mikael KROK 
  * 
  *         18 déc. 2012
  * 

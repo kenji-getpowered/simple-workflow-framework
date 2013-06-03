@@ -6,7 +6,7 @@ import net.mikaelkrok.smf.executor.CallableStep;
 
 /**
  * 
- * @author Mikael KROK 884002
+ * @author Mikael KROK 
  * 
  * 23 nov. 2012
  *
