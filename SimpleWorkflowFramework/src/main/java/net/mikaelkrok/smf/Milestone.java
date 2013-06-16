@@ -3,6 +3,8 @@
  */
 package net.mikaelkrok.smf;
 
+import java.io.Serializable;
+
 /**
  * @author Mikael KROK 
  * 
@@ -10,10 +12,18 @@ package net.mikaelkrok.smf;
  * @param <T>
  *
  */
-public interface Milestone<T> extends Cloneable {
+public interface Milestone<T> extends Cloneable, Serializable  {
     
-    public T getValue();
+    /**
+     * 
+     * @return
+     */
+	public T getValue();
     
+	/**
+	 * 
+	 * @param parameter
+	 */
     public void setValue(T parameter);
     
     public Object clone() throws CloneNotSupportedException;

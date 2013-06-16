@@ -16,7 +16,7 @@ import net.mikaelkrok.smf.exception.StepPreviousNotExisitingException;
  * to a final {@link Milestone} 
  *
  */
-public interface Workflow<U extends Object, V extends Milestone<U>, T extends Step<?, ?>> {
+public interface Workflow<U extends Object, V extends Milestone<U>, T extends Step<?, ?, ?, ?>> {
     
     /**
      * add a step to the chain

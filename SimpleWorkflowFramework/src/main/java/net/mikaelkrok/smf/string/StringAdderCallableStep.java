@@ -4,6 +4,7 @@
 package net.mikaelkrok.smf.string;
 
 import net.mikaelkrok.smf.Milestone;
+import net.mikaelkrok.smf.exception.StepWithNullMilestoneException;
 import net.mikaelkrok.smf.executor.CallableStep;
 
 /**
@@ -12,8 +13,8 @@ import net.mikaelkrok.smf.executor.CallableStep;
  *         19 déc. 2012
  * 
  */
-public class StringAdderCallableStep<V extends Milestone<String>> extends
-		CallableStep<String, V> {
+public class StringAdderCallableStep<V extends Milestone<String>, U extends Milestone<String>> extends
+		CallableStep<V, String, U, String> {
 
 	public StringAdderCallableStep(int stepId, int previousStepId,
 			boolean finalStep) {
@@ -29,7 +30,8 @@ public class StringAdderCallableStep<V extends Milestone<String>> extends
 	}
 
 	@Override
-	public V call() throws Exception {
+	public Boolean call() throws Exception {
+		if(milestone == null ) throw new StepWithNullMilestoneException();
 		if (!hasBeenExecuted()) {
 			synchronized (this) {
 				if (milestone != null) {
@@ -37,15 +39,15 @@ public class StringAdderCallableStep<V extends Milestone<String>> extends
 					System.out.println("StringAdderCallableStep.call()- "
 							+ stepId + " - " + newValue);
 					milestone.setValue(newValue);
+					setExecuted(true);
 				} else {
 					System.out.println(" milestone is null");
 				}
-				setExecuted(true);
-				return milestone;
+				return  true;
 			}
 		}
 		System.out.println("StringAdderCallableStep.call() " + stepId
 				+ " - has already been executed");
-		return milestone;
+		return  true;
 	}
 }

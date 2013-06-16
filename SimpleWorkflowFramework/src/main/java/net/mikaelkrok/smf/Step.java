@@ -12,9 +12,11 @@ import java.io.Serializable;
  * 21 nov. 2012
  *
  * The step represent a set of process that makes the {@link #Milestone)} goes
- * from initial state to the result state.
+ * from initial state to the result state. 
+ * Initial state can correspond to a particular Milstone (such as String) and 
+ * results in a different Milstone (for instance xml).
  */
-public  interface Step<T extends Milestone<U>, U extends Object> extends Serializable {
+public  interface Step<T extends Milestone<A>, A extends Object , U extends Milestone<B> ,B extends Object> extends Serializable {
 
     /**
      * 
@@ -22,6 +24,13 @@ public  interface Step<T extends Milestone<U>, U extends Object> extends Seriali
      * @return
      */
     public void setMilestone(T milestone);
+    
+    /**
+     * Can return a milestone depending from a different type 
+     * from the input
+     * @return
+     */
+    public U getMilestone();
     
     /**
      * 
@@ -47,9 +56,5 @@ public  interface Step<T extends Milestone<U>, U extends Object> extends Seriali
      */
     public Boolean hasBeenExecuted();
     
-    /**
-     * 
-     * @return
-     */
-    public T getMilestone();
+
 }

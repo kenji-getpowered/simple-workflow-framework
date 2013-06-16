@@ -29,9 +29,9 @@ public class StepCallableWorkflow {
 	 */
 	public static void main(String[] args) {
 
-		ExecutorCallableWorkflow<String, Milestone<String>> callableWorkflow = new ExecutorCallableWorkflow<String, Milestone<String>>();
+		ExecutorCallableWorkflow<Milestone<String>, String, Milestone<String>,  String> callableWorkflow = new ExecutorCallableWorkflow<Milestone<String>, String, Milestone<String>,   String>();
 		Milestone<String> milestone = new StringMilestoneImpl();
-		milestone.setValue(" begin");
+		milestone.setValue("begin");
 		/*
 		 * Step 2 requires Step 1 Step 5 requires Step 1
 		 * 
@@ -39,36 +39,36 @@ public class StepCallableWorkflow {
 		 * 
 		 * 1 : 2, 5 2 : 6, 3 6 : 7
 		 */
-		StringAdderCallableStep<Milestone<String>> callableStep = new StringAdderCallableStep<Milestone<String>>(
+		StringAdderCallableStep<Milestone<String>,  Milestone<String>> callableStep = new StringAdderCallableStep<Milestone<String>, Milestone<String>>(
 				1, false);
 		try {
 			callableWorkflow.addStep(callableStep);
 
-			StringAdderCallableStep<Milestone<String>> callableStep2 = new StringAdderCallableStep<Milestone<String>>(
+			StringAdderCallableStep<Milestone<String>, Milestone<String>> callableStep2 = new StringAdderCallableStep<Milestone<String>, Milestone<String>>(
 					2, 1, false);
 			callableWorkflow.addStep(callableStep2);
 
-			StringAdderCallableStep<Milestone<String>> callableStep3 = new StringAdderCallableStep<Milestone<String>>(
+			StringAdderCallableStep<Milestone<String>, Milestone<String>> callableStep3 = new StringAdderCallableStep<Milestone<String>, Milestone<String>>(
 					3, 2, true);
 			callableWorkflow.addStep(callableStep3);
 
-			StringAdderCallableStep<Milestone<String>> callableStep5 = new StringAdderCallableStep<Milestone<String>>(
+			StringAdderCallableStep<Milestone<String>, Milestone<String>> callableStep5 = new StringAdderCallableStep<Milestone<String>, Milestone<String>>(
 					5, 1, true);
 			callableWorkflow.addStep(callableStep5);
 
-			StringAdderCallableStep<Milestone<String>> callableStep6 = new StringAdderCallableStep<Milestone<String>>(
+			StringAdderCallableStep<Milestone<String>, Milestone<String>> callableStep6 = new StringAdderCallableStep<Milestone<String>, Milestone<String>>(
 					6, 2, false);
 			callableWorkflow.addStep(callableStep6);
 
-			StringAdderCallableStep<Milestone<String>> callableStep7 = new StringAdderCallableStep<Milestone<String>>(
+			StringAdderCallableStep<Milestone<String>, Milestone<String>> callableStep7 = new StringAdderCallableStep<Milestone<String>, Milestone<String>>(
 					7, 6, true);
 			callableWorkflow.addStep(callableStep7);
 
-			StringStepCapitalizer<Milestone<String>> callableStep8 = new StringStepCapitalizer<Milestone<String>>(
+			StringStepCapitalizer<Milestone<String>, Milestone<String>> callableStep8 = new StringStepCapitalizer<Milestone<String>, Milestone<String>>(
 					8, 7, true);
 			callableWorkflow.addStep(callableStep8);
 
-			StringStepTrimmer<Milestone<String>> callableStep9 = new StringStepTrimmer<Milestone<String>>(
+			StringStepTrimmer<Milestone<String>, Milestone<String>> callableStep9 = new StringStepTrimmer<Milestone<String>, Milestone<String>>(
 					9, 8, true);
 			callableWorkflow.addStep(callableStep9);
 
@@ -77,7 +77,7 @@ public class StepCallableWorkflow {
 			List<CallableStep> finalSteps = callableWorkflow.getFinalSteps();
 			System.out
 					.println("*************** Final Steps *********************");
-			for (CallableStep<?, ?> finalStep : finalSteps) {
+			for (CallableStep<?, ?, ?, ?> finalStep : finalSteps) {
 				System.out.println("StepCallableWorkflow.main() Step "
 						+ finalStep.getStepId() + "  result :"
 						+ finalStep.getMilestone().getValue().toString());

@@ -19,8 +19,10 @@ import net.mikaelkrok.smf.Step;
  *         an executor and Step to be able to accept a parameter
  * 
  */
-public class CallableStep<U extends Object, V extends Milestone<U>> implements
-		Callable<V>, Step<V, U> {
+public class CallableStep<
+	T extends Milestone<A>, A extends Object , 
+	U extends Milestone<B> ,B extends Object> 
+		implements		Callable<Boolean>, Step<T, A, U, B> {
 
 	protected int stepId;
 
@@ -30,7 +32,7 @@ public class CallableStep<U extends Object, V extends Milestone<U>> implements
 
 	protected boolean executed;
 
-	protected V milestone;
+	protected T milestone;
 
 	public CallableStep(int stepId, int previousStepId, boolean finalStep) {
 		super();
@@ -50,12 +52,12 @@ public class CallableStep<U extends Object, V extends Milestone<U>> implements
 		this(stepId, previousStepId, false);
 	}
 
-	public V call() throws Exception {
+	public Boolean call() throws Exception {
 		System.out.println("CallableStep.call() ");
 		if (milestone != null) {
 			milestone.getValue();
 		}
-		return milestone;
+		return true;
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class CallableStep<U extends Object, V extends Milestone<U>> implements
 	 * the thread
 	 * 
 	 */
-	public void setMilestone(V milestone) {
+	public void setMilestone(T milestone) {
 		this.milestone = milestone;
 	}
 
@@ -87,8 +89,8 @@ public class CallableStep<U extends Object, V extends Milestone<U>> implements
 		this.executed = executed;
 	}
 
-	public V getMilestone() {
-		return milestone;
+	public U getMilestone() {
+		return (U) milestone;
 	}
 
 }

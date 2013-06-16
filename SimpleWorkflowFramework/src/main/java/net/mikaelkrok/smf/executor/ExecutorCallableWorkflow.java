@@ -24,13 +24,16 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 /**
+ * 
  * @author Mikael KROK
+ *
+ * 4 juin 2013
  * 
- *         test - 25 nov. 2012
- * 
+ * @param <A>
+ * @param <T>
  */
-public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
-		implements Workflow<U, Milestone<U>, CallableStep<U, V>> {
+public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, U extends Milestone<B>, B extends Object>
+		implements Workflow<A, Milestone<A>, CallableStep<T, A, U, B>> {
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -38,9 +41,11 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 	 * Implementation of diagram of step precedence This is a list of keys,
 	 * linked to other keys.
 	 * 
-	 * Step 2 requires Step 1 Step 5 requires Step 1
+	 * Step 2 requires Step 1 
+	 * Step 5 requires Step 1
 	 * 
-	 * Step 6 requires Step 2 Step 3 requires Step 2
+	 * Step 6 requires Step 2 
+	 * Step 3 requires Step 2
 	 * 
 	 * 1 : 2, 5 2 : 6, 3
 	 * 
@@ -53,16 +58,16 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 	 */
 	private List<Integer> finalStep = new ArrayList<Integer>();
 
-	private Map<Integer, CallableStep<U, V>> steps = new HashMap<Integer, CallableStep<U, V>>();
+	private Map<Integer, CallableStep<T, A, U, B>> steps = new HashMap<Integer, CallableStep<T, A, U, B>>();
 
 	/**
 	 * save the future to extract the result when needed
 	 */
-	private Map<Integer, Future<V>> futures = new HashMap<Integer, Future<V>>();
+	private Map<Integer, Future<Boolean>> futures = new HashMap<Integer, Future<Boolean>>();
 
 	List<CallableStep> list = new ArrayList<CallableStep>();
 
-	public void addStep(CallableStep<U, V> step)
+	public void addStep(CallableStep<T, A, U, B> step)
 			throws StepAlreadyExistingException,
 			StepPreviousNotExisitingException, StepBadPreviousException {
 		if (!(step.getStepId() > step.getGetPreviousStepId())) {
@@ -78,8 +83,10 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 
 		if (!steps.containsKey(step.getGetPreviousStepId())
 				&& step.getGetPreviousStepId() != 0) {
-			// throw an exception because the step indirect to a not existing
-			// steps
+			/*
+			 *  throw an exception because the step indirect to 
+			 *  a not existing step
+			 */
 			throw new StepPreviousNotExisitingException();
 		}
 
@@ -98,7 +105,7 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 
 	}
 
-	public Milestone<U> run(Milestone<U> milestone) {
+	public Milestone<A> run(Milestone<A> milestone) {
 		System.out
 				.println("****************************************************************");
 		System.out.println("                      Starting workflow engine");
@@ -144,7 +151,7 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	private void executeSubSteps(CallableStep<U, V> callableStep)
+	private void executeSubSteps(CallableStep<T, A, U, B> callableStep)
 			throws CloneNotSupportedException, InterruptedException,
 			ExecutionException {
 		System.out.println("** Executing substeps for step "
@@ -170,7 +177,7 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 	 * @return success or not
 	 * @throws CloneNotSupportedException
 	 */
-	private boolean doExecuteStep(CallableStep<U, V> callableStep)
+	private boolean doExecuteStep(CallableStep<T, A, U, B> callableStep)
 			throws CloneNotSupportedException {
 		if (callableStep.getMilestone() == null) {
 			System.out
@@ -178,7 +185,7 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 							+ callableStep.getStepId());
 			return false;
 		}
-		V milestoneCopy = (V) callableStep.getMilestone().clone();
+		T milestoneCopy = (T) callableStep.getMilestone().clone();
 		callableStep.setMilestone(milestoneCopy);
 		if (!callableStep.hasBeenExecuted()) {
 			futures.put(callableStep.getStepId(), executor.submit(callableStep));
@@ -192,7 +199,7 @@ public class ExecutorCallableWorkflow<U extends Object, V extends Milestone<U>>
 	 * @return
 	 * @throws CloneNotSupportedException
 	 */
-	private Future<V> executeStep(CallableStep<U, V> callableStep)
+	private Future<Boolean> executeStep(CallableStep<T, A, U, B> callableStep)
 			throws CloneNotSupportedException {
 		System.out.println("* Executing step " + callableStep.getStepId());
 		doExecuteStep(callableStep);

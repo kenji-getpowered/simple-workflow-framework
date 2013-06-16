@@ -13,8 +13,8 @@ import net.mikaelkrok.smf.executor.CallableStep;
  *  render the {@link Milestone<String>} to capital letters
  * 
  */
-public class StringStepCapitalizer<V extends Milestone<String>> extends
-		CallableStep<String, V> {
+public class StringStepCapitalizer<V extends Milestone<String>, U extends Milestone<String>> extends
+CallableStep<V, String, U, String> {
 
 	public StringStepCapitalizer(int stepId, int previousStepId,
 			boolean finalStep) {
@@ -29,12 +29,12 @@ public class StringStepCapitalizer<V extends Milestone<String>> extends
 		super(stepId, previousStepId, false);
 	}
 
-	public V call() throws Exception {
+	public Boolean call() throws Exception {
 		if(milestone == null ) throw new StepWithNullMilestoneException();
 		milestone.setValue(milestone.getValue().toUpperCase());
 		System.out.println(" Result after step " + this.getClass().getName()
 				+ "  " + milestone.getValue());
-		return milestone;
+		return  true;
 	}
 
 }
