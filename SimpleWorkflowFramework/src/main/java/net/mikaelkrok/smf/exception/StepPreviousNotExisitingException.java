@@ -3,7 +3,7 @@
  */
 package net.mikaelkrok.smf.exception;
 
-import net.mikaelkrok.smf.Workflow;
+import net.mikaelkrok.smf.workflow.Workflow;
 
 /**
  * @author Mikael KROK 

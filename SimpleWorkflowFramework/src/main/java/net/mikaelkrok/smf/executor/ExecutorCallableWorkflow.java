@@ -14,40 +14,39 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import net.mikaelkrok.smf.Milestone;
-import net.mikaelkrok.smf.Workflow;
 import net.mikaelkrok.smf.exception.StepAlreadyExistingException;
 import net.mikaelkrok.smf.exception.StepBadPreviousException;
 import net.mikaelkrok.smf.exception.StepPreviousNotExisitingException;
+import net.mikaelkrok.smf.workflow.Milestone;
+import net.mikaelkrok.smf.workflow.Step;
+import net.mikaelkrok.smf.workflow.Workflow;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 /**
- * 
  * @author Mikael KROK
- *
- * 4 juin 2013
  * 
- * @param <A>
- * @param <T>
+ *         test - 25 nov. 2012
+ * 
  */
-public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, U extends Milestone<B>, B extends Object>
-		implements Workflow<A, Milestone<A>, CallableStep<T, A, U, B>> {
+public class ExecutorCallableWorkflow<O extends Object, M extends Milestone<O>, S extends Step<M, O>> 
+		implements Workflow<O, M, S> {
 
-	ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	/**
-	 * Implementation of diagram of step precedence This is a list of keys,
-	 * linked to other keys.
-	 * 
+	 * <pre>
 	 * Step 2 requires Step 1 
 	 * Step 5 requires Step 1
-	 * 
 	 * Step 6 requires Step 2 
 	 * Step 3 requires Step 2
-	 * 
-	 * 1 : 2, 5 2 : 6, 3
+	 * Step 7 requires Step 6
+	 * =>
+	 * 1 : 2,5 
+	 * 2 : 6,3 
+	 * 6 : 7
+	 * </pre>
 	 * 
 	 */
 	private ListMultimap<Integer, Integer> workflow = ArrayListMultimap
@@ -58,16 +57,14 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 	 */
 	private List<Integer> finalStep = new ArrayList<Integer>();
 
-	private Map<Integer, CallableStep<T, A, U, B>> steps = new HashMap<Integer, CallableStep<T, A, U, B>>();
+	private Map<Integer, S> steps = new HashMap<Integer, S>();
 
 	/**
 	 * save the future to extract the result when needed
 	 */
-	private Map<Integer, Future<Boolean>> futures = new HashMap<Integer, Future<Boolean>>();
+	private Map<Integer, Future<M>> futures = new HashMap<Integer, Future<M>>();
 
-	List<CallableStep> list = new ArrayList<CallableStep>();
-
-	public void addStep(CallableStep<T, A, U, B> step)
+	public void addStep(S step)
 			throws StepAlreadyExistingException,
 			StepPreviousNotExisitingException, StepBadPreviousException {
 		if (!(step.getStepId() > step.getGetPreviousStepId())) {
@@ -83,10 +80,8 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 
 		if (!steps.containsKey(step.getGetPreviousStepId())
 				&& step.getGetPreviousStepId() != 0) {
-			/*
-			 *  throw an exception because the step indirect to 
-			 *  a not existing step
-			 */
+			// throw an exception because the step indirect to a not existing
+			// steps
 			throw new StepPreviousNotExisitingException();
 		}
 
@@ -105,7 +100,9 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 
 	}
 
-	public Milestone<A> run(Milestone<A> milestone) {
+	public M run(M milestone) {
+		
+
 		System.out
 				.println("****************************************************************");
 		System.out.println("                      Starting workflow engine");
@@ -114,9 +111,14 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 		try {
 			SortedSet<Integer> sortedSet = new TreeSet<Integer>(
 					workflow.keySet());
+			// first step
+			S callableStep1 = steps.get(1);
+			executeStep(callableStep1);
+			executeSubSteps(callableStep1);
+			
 			for (Integer stepNumber : sortedSet) {
 				// Execute step
-				CallableStep callableStep = steps.get(stepNumber);
+				S callableStep = steps.get(stepNumber);
 				if (stepNumber == 1) {
 					callableStep.setMilestone(milestone);
 				}
@@ -151,22 +153,24 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	private void executeSubSteps(CallableStep<T, A, U, B> callableStep)
+	@SuppressWarnings("unchecked")
+	private void executeSubSteps(S callableStep)
 			throws CloneNotSupportedException, InterruptedException,
 			ExecutionException {
 		System.out.println("** Executing substeps for step "
 				+ callableStep.getStepId());
 		// Then execute sub steps
 		List<Integer> listStep = workflow.get(callableStep.getStepId());
-
-		// prepare its parameter
-		// V milestone2 = getMilestone(callableStep);
-
+		
 		for (Integer subStepNumber : listStep) {
 			System.out.println("**** Executing substep " + subStepNumber);
-			CallableStep subCallableStep = steps.get(subStepNumber);
-			subCallableStep.setMilestone((Milestone) callableStep
-					.getMilestone().clone());
+			S  subCallableStep = steps.get(subStepNumber);
+		    try {
+		    	subCallableStep.setMilestone((M) callableStep
+		    			.getMilestone().clone());
+		    } catch (ClassCastException e) {
+		    	// Let it fail policy (Equivalent to a very complicated instanceof for generic)
+		    }
 		}
 	}
 
@@ -177,7 +181,7 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 	 * @return success or not
 	 * @throws CloneNotSupportedException
 	 */
-	private boolean doExecuteStep(CallableStep<T, A, U, B> callableStep)
+	private boolean doExecuteStep(S callableStep)
 			throws CloneNotSupportedException {
 		if (callableStep.getMilestone() == null) {
 			System.out
@@ -185,11 +189,16 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 							+ callableStep.getStepId());
 			return false;
 		}
-		T milestoneCopy = (T) callableStep.getMilestone().clone();
-		callableStep.setMilestone(milestoneCopy);
-		if (!callableStep.hasBeenExecuted()) {
-			futures.put(callableStep.getStepId(), executor.submit(callableStep));
-		}
+	    try {
+	    	@SuppressWarnings("unchecked")
+			M milestoneCopy = (M) callableStep.getMilestone().clone();
+	    	callableStep.setMilestone(milestoneCopy);
+	    	if (!callableStep.hasBeenExecuted()) {
+	    		futures.put(callableStep.getStepId(), executor.submit(callableStep));
+	    	}
+	    } catch (ClassCastException e) {
+	    	// Let it fail policy (Equivalent to a very complicated instanceof for generic)
+	    }
 		return true;
 	}
 
@@ -199,15 +208,15 @@ public class ExecutorCallableWorkflow<T extends Milestone<A>, A extends Object, 
 	 * @return
 	 * @throws CloneNotSupportedException
 	 */
-	private Future<Boolean> executeStep(CallableStep<T, A, U, B> callableStep)
+	private Future<M> executeStep(S callableStep)
 			throws CloneNotSupportedException {
 		System.out.println("* Executing step " + callableStep.getStepId());
 		doExecuteStep(callableStep);
 		return futures.get(callableStep.getStepId());
 	}
 
-	public List<CallableStep> getFinalSteps() {
-		List<CallableStep> stepsList = new ArrayList<CallableStep>();
+	public List<S> getFinalSteps() {
+		List<S> stepsList = new ArrayList<S>();
 		for (Integer subStepNumber : finalStep) {
 			stepsList.add(steps.get(subStepNumber));
 		}

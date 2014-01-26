@@ -1,11 +1,25 @@
 package net.mikaelkrok.smf;
 
+import java.util.List;
+
+import net.mikaelkrok.smf.exception.StepAlreadyExistingException;
+import net.mikaelkrok.smf.exception.StepBadPreviousException;
+import net.mikaelkrok.smf.exception.StepPreviousNotExisitingException;
+import net.mikaelkrok.smf.executor.ExecutorCallableWorkflow;
+import net.mikaelkrok.smf.workflow.Milestone;
+import net.mikaelkrok.smf.workflow.milestone.string.StringMilestoneImpl;
+import net.mikaelkrok.smf.workflow.step.StepImpl;
+import net.mikaelkrok.smf.workflow.step.string.StringAdderStep;
+import net.mikaelkrok.smf.workflow.step.string.StringStepCapitalizer;
+import net.mikaelkrok.smf.workflow.step.string.StringStepTrimmer;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit test for simple App.
+ * 
+ * @author 884002
+ *
  */
 public class AppTest 
     extends TestCase
@@ -33,6 +47,14 @@ public class AppTest
      */
     public void testApp()
     {
-        assertTrue( true );
+//    	try{
+//    		
+//		} catch (StepAlreadyExistingException e) {
+//			fail(e.getMessage());
+//		} catch (StepPreviousNotExisitingException e) {
+//			fail(e.getMessage());
+//		} catch (StepBadPreviousException e) {
+//			fail(e.getMessage());
+//		}
     }
 }
