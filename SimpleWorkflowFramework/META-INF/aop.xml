@@ -1,0 +1,19 @@
+<!DOCTYPE aspectj PUBLIC
+        "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+
+    <weaver>
+
+        <!-- only weave classes in our application-specific packages -->
+        <include within="net.mikaelkrok.smf.*"/>
+
+    </weaver>
+
+    <aspects>
+
+        <!-- weave in just this aspect -->        
+        <aspect name="net.mikaelkrok.smf.advice.StepXmlDumperAdvice"/>
+
+    </aspects>
+
+  </aspectj
