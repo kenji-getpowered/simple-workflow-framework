@@ -1,7 +1,10 @@
 package net.mikaelkrok.swf.workflow.step.string;
 
+import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import net.mikaelkrok.swf.SimpleWorkflowFramework;
 import net.mikaelkrok.swf.workflow.Milestone;
 import net.mikaelkrok.swf.workflow.step.StepImpl;
 
@@ -14,13 +17,16 @@ import net.mikaelkrok.swf.workflow.step.StepImpl;
  *         This steps trims white space n the word
  * 
  */
-@Service
+@Service("stringStepTrimmer")
+@Scope("prototype")
 public class StringStepTrimmer<V extends Milestone<String>> extends
 StepImpl<String, V> {
 
+	private static org.apache.log4j.Logger LOGGER = Logger.getLogger(StringStepTrimmer.class);
+	
 	public V call() throws Exception {
 		milestone.setValue(milestone.getValue().trim());
-		System.out.println(" Result after step " + this.getClass().getName()
+		LOGGER.info(" Result after step " + this.getClass().getName()
 				+ "  +" + milestone.getValue() + "+");
 		return milestone;
 	}

@@ -13,7 +13,7 @@ import net.mikaelkrok.swf.workflow.Milestone;
  */
 public class StringMilestoneImpl implements Milestone<String> {
 
-	private String myString;
+	private String myString = "";
 
 	public String getValue() {
 		return myString;
@@ -29,5 +29,22 @@ public class StringMilestoneImpl implements Milestone<String> {
 		impl.setValue(myString);
 		return impl;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return myString.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return myString.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return myString.toString();
+	}
+	
+	
 
 }

@@ -20,7 +20,7 @@ public class StepXmlDumperAdvice  {
 	
 	private final static XStream xstream = new XStream();
 
-    @Around(value="execution(* net.mikaelkrok.smf.workflow.Step+.call())")
+    @Around(value="execution(* net.mikaelkrok.swf.workflow.Step+.call())")
     public void aroundCall(ProceedingJoinPoint pjp){
     	
     	Object target = pjp.getTarget();
@@ -28,7 +28,6 @@ public class StepXmlDumperAdvice  {
     		Step<?, ?> targetStep = (Step<?, ?>) target;
     		System.out.println("XML_BEFORE= "+ xstream.toXML(targetStep.getMilestone()));
     		try {
-    			System.out.print("STEP=");
     			pjp.proceed();
     			System.out.println("XML_AFTER= "+ xstream.toXML(targetStep.getMilestone()));
     		} catch (Throwable e) {

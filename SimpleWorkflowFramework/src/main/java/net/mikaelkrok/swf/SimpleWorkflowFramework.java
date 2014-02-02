@@ -13,8 +13,9 @@ import net.mikaelkrok.swf.workflow.Milestone;
 import net.mikaelkrok.swf.workflow.Step;
 import net.mikaelkrok.swf.workflow.milestone.string.StringMilestoneImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,38 +26,32 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SimpleWorkflowFramework {
-	
-	@Autowired  
-	@Qualifier("stringAdderStep")
-	private Step<Milestone<String>, String> stringAdderStep;//;// = new StringAdderStep<Milestone<String>>();
-	
-//	@Autowired
-//	private StringAdderStep<Milestone<String>> stringAdderStep2;// = new StringAdderStep<Milestone<String>>();
-//	
-//	@Autowired
-//	private StringAdderStep<Milestone<String>> stringAdderStep3;// = new StringAdderStep<Milestone<String>>();
-//	
-//	@Autowired
-//	private StringAdderStep<Milestone<String>> stringAdderStep5;// = new StringAdderStep<Milestone<String>>();
-//	
-//	@Autowired
-//	private StringAdderStep<Milestone<String>> stringAdderStep6;// = new StringAdderStep<Milestone<String>>();
-//	
-//	@Autowired
-//	private StringAdderStep<Milestone<String>> stringAdderStep7;// = new StringAdderStep<Milestone<String>>();
-//	
-//	@Autowired
-//	private StringStepCapitalizer<Milestone<String>> stringStepCapitalizer;// = new StringStepCapitalizer<Milestone<String>>();
-//	
-//	@Autowired
-//	private StringStepTrimmer<Milestone<String>> stringStepTrimmer;// = new StringStepTrimmer<Milestone<String>>();
-////	
+
+	private static org.apache.log4j.Logger LOGGER = Logger.getLogger(SimpleWorkflowFramework.class);
+
 	public void run(){
-	      
+	
+		/* ************************************************************
+		 * 
+		 *  Service initialization
+		 * 
+		 * ************************************************************		
+		 */
+		
+
+		// Spring context
+		ApplicationContext context = 
+              new ClassPathXmlApplicationContext("application-context.xml");
+		
+		// Execution tool
 		ExecutorCallableWorkflow<String, Milestone<String>, Step<Milestone<String>, String>> callableWorkflow = 
 				new ExecutorCallableWorkflow<String, Milestone<String>, Step<Milestone<String>, String>>();
+		
+		// Starting point
 		Milestone<String> milestone = new StringMilestoneImpl();
 		milestone.setValue(" begin");
+		
+		
 		/*
 		 * Step 2 requires Step 1 Step 5 requires Step 1
 		 * 
@@ -65,9 +60,15 @@ public class SimpleWorkflowFramework {
 		 * 1 : 2, 5 2 : 6, 3 6 : 7
 		 */
 		try {
+			
+			Step<Milestone<String>, String> stringAdderStep = (Step<Milestone<String>, String>) context.getBean("stringAdderStep");
 			stringAdderStep.init(1, 0, true);
-;			stringAdderStep.setMilestone(milestone);
-			callableWorkflow.addStep(stringAdderStep);
+ 			callableWorkflow.addStep(stringAdderStep);
+			
+			Step<Milestone<String>, String>  bean = (Step<Milestone<String>, String>) context.getBean("stringStepCapitalizer");
+			bean.init(2, 1, false);
+			callableWorkflow.addStep(bean);
+//			
 //			callableStep2.init(2, 1, false);
 //			callableStep3.init(3, 2, true);
 //			callableStep5.init(5, 1, true);
@@ -89,7 +90,7 @@ public class SimpleWorkflowFramework {
 			System.out
 					.println("*************** Final Steps *********************");
 			for (Step<?, ?> finalStep : finalSteps) {
-				System.out.println("StepCallableWorkflow.main() Step "
+				LOGGER.info("StepCallableWorkflow.main() Step "
 						+ finalStep.getStepId() + "  result :"
 						+ finalStep.getMilestone().getValue().toString());
 			}

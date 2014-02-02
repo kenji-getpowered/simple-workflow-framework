@@ -3,6 +3,9 @@
  */
 package net.mikaelkrok.swf.workflow.step;
 
+import org.apache.log4j.Logger;
+
+import net.mikaelkrok.swf.SimpleWorkflowFramework;
 import net.mikaelkrok.swf.workflow.Milestone;
 import net.mikaelkrok.swf.workflow.Step;
 
@@ -19,6 +22,8 @@ import net.mikaelkrok.swf.workflow.Step;
  */
 public class StepImpl<O extends Object, M extends Milestone<O>> implements Step<M, O> {
 
+	private static org.apache.log4j.Logger LOGGER = Logger.getLogger(StepImpl.class);
+
 	protected int stepId;
 
 	protected int previousStepId;
@@ -30,7 +35,7 @@ public class StepImpl<O extends Object, M extends Milestone<O>> implements Step<
 	protected M milestone;
 
 	public M call() throws Exception {
-		System.out.println("CallableStep.call() ");
+		LOGGER.info("CallableStep.call() ");
 		if (milestone != null) {
 			milestone.getValue();
 		}
@@ -75,6 +80,19 @@ public class StepImpl<O extends Object, M extends Milestone<O>> implements Step<
 		this.stepId = stepId;
 		this.previousStepId = previousStepId;
 		this.finalStep = finalStep;
+	}
+
+	private Object callSequence;
+	
+	@Override
+	public Object getStripe() {
+		return callSequence;
+	}
+
+	@Override
+	public void setStripe(Object callSequence) {
+		this.callSequence = callSequence;
+		
 	}
 
 }

@@ -14,11 +14,15 @@
     <context:annotation-config/>
 
     <!-- Activates scanning of @Repository and @Service -->
-    <context:component-scan base-package="net.mikaelkrok.smf"/>
+    <context:component-scan base-package="net.mikaelkrok.swf"/>
 
     <!-- this switches on the load-time weaving -->
-   <bean class="org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator" />
+   <!-- bean class="org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator" />-->
+   <aop:aspectj-autoproxy/>
+   <aop:config proxy-target-class="true">
+    <!-- other beans defined here... -->
+	</aop:config>
       
-	<bean id="stepAdvice" class="net.mikaelkrok.smf.advice.StepXmlDumperAdvice"></bean>
+	<bean id="stepAdvice" class="net.mikaelkrok.swf.advice.StepXmlDumperAdvice"></bean>
 
 </beans>

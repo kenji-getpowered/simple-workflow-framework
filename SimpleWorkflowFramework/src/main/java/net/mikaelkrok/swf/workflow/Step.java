@@ -4,7 +4,8 @@
 package net.mikaelkrok.swf.workflow;
 
 import java.io.Serializable;
-import java.util.concurrent.Callable;
+
+import net.mikaelkrok.swf.executor.StripedCallable;
 
 
 /**
@@ -15,7 +16,7 @@ import java.util.concurrent.Callable;
  * The step represent a set of process that makes the {@link #Milestone)} goes
  * from initial state to the result state.
  */
-public  interface Step<M extends Milestone<O>, O extends Object> extends Serializable, Callable<M> {
+public  interface Step<M extends Milestone<O>, O extends Object> extends Serializable, StripedCallable<M> {
 
     /**
      * 
@@ -60,4 +61,10 @@ public  interface Step<M extends Milestone<O>, O extends Object> extends Seriali
      * @return
      */
     public void  init(int stepId, int previousStepId, boolean finalStep);
+    
+    
+    public void setStripe(Object callSequence);
+
+	Object getStripe();
+    
 }
